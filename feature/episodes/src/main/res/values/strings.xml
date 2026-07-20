@@ -1,0 +1,18 @@
+<resources>
+    <string name="episodes_title">Episodios</string>
+    <string name="episodes_subtitle">Todas las temporadas de la API</string>
+    <string name="episodes_empty">No se encontraron episodios.</string>
+    <string name="episodes_error">No se han podido cargar los episodios.</string>
+    <string name="episodes_retry">Reintentar</string>
+    <plurals name="episodes_loaded">
+        <item quantity="one">%1$d de %2$d episodio</item>
+        <item quantity="other">%1$d de %2$d episodios</item>
+    </plurals>
+    <string name="episodes_load_more">Cargar más episodios</string>
+    <string name="episodes_load_more_error">No se pudo cargar la siguiente página.</string>
+    <string name="episode_air_date">Emisión: %1$s</string>
+    <plurals name="episode_characters">
+        <item quantity="one">%1$d personaje</item>
+        <item quantity="other">%1$d personajes</item>
+    </plurals>
+</resources>

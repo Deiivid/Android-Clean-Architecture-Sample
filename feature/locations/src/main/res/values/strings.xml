@@ -1,0 +1,18 @@
+<resources>
+    <string name="locations_title">Lugares</string>
+    <string name="locations_subtitle">Planetas, dimensiones y estaciones</string>
+    <string name="locations_empty">No se encontraron lugares.</string>
+    <string name="locations_error">No se han podido cargar los lugares.</string>
+    <string name="locations_retry">Reintentar</string>
+    <plurals name="locations_loaded">
+        <item quantity="one">%1$d de %2$d lugar</item>
+        <item quantity="other">%1$d de %2$d lugares</item>
+    </plurals>
+    <string name="locations_load_more">Cargar más lugares</string>
+    <string name="locations_load_more_error">No se pudo cargar la siguiente página.</string>
+    <string name="location_dimension">Dimensión: %1$s</string>
+    <plurals name="location_residents">
+        <item quantity="one">%1$d residente</item>
+        <item quantity="other">%1$d residentes</item>
+    </plurals>
+</resources>

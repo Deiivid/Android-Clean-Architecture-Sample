@@ -1,0 +1,20 @@
+<resources>
+    <string name="characters_title">Personajes</string>
+    <string name="characters_subtitle">Clean Architecture · Compose · Hilt</string>
+    <string name="characters_empty">No se encontraron personajes.</string>
+    <string name="characters_error">No se han podido cargar los personajes.</string>
+    <string name="characters_retry">Reintentar</string>
+    <plurals name="characters_loaded">
+        <item quantity="one">%1$d de %2$d personaje</item>
+        <item quantity="other">%1$d de %2$d personajes</item>
+    </plurals>
+    <string name="characters_load_more">Cargar más personajes</string>
+    <string name="characters_load_more_error">No se pudo cargar la siguiente página.</string>
+    <string name="character_image_description">Retrato de %1$s</string>
+    <string name="character_location">Última localización: %1$s</string>
+    <string name="character_origin">Origen: %1$s</string>
+    <plurals name="character_episodes">
+        <item quantity="one">Aparece en %1$d episodio</item>
+        <item quantity="other">Aparece en %1$d episodios</item>
+    </plurals>
+</resources>
