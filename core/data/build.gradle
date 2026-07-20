@@ -31,4 +31,7 @@ dependencies {
     implementation libs.okhttp.logging
     implementation libs.retrofit
     implementation libs.retrofit.gson
+
+    testImplementation libs.junit
+    testImplementation libs.okhttp.mockwebserver
 }

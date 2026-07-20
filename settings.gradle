@@ -15,6 +15,7 @@ dependencyResolutionManagement {
 rootProject.name = "RickyMortyDN"
 include ':app'
 include ':core:model'
+include ':core:testing'
 include ':core:domain'
 include ':core:data'
 include ':feature:characters'

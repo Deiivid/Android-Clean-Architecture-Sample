@@ -43,5 +43,8 @@ dependencies {
     implementation libs.hilt.lifecycle.viewmodel.compose
     ksp libs.hilt.compiler
 
+    testImplementation project(':core:testing')
+    testImplementation libs.turbine
+
     debugImplementation libs.androidx.compose.ui.tooling
 }
