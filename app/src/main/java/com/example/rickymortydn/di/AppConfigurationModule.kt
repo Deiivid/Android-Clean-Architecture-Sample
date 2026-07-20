@@ -1,5 +1,6 @@
 package com.example.rickymortydn.di
 
+import com.example.rickymortydn.BuildConfig
 import com.example.rickymortydn.core.data.config.ApiCredentials
 import com.example.rickymortydn.core.data.config.NetworkConfiguration
 import dagger.Module
@@ -14,15 +15,15 @@ object AppConfigurationModule {
     @Provides
     @Singleton
     fun provideNetworkConfiguration(): NetworkConfiguration = NetworkConfiguration(
-        baseUrl = "https://rickandmortyapi.com/api/",
+        baseUrl = BuildConfig.RICK_AND_MORTY_BASE_URL,
     )
 
     @Provides
     @Singleton
     fun provideApiCredentials(): ApiCredentials = ApiCredentials(
-        apiKey = "",
-        clientId = "",
-        tenantId = "",
-        accessToken = "",
+        apiKey = BuildConfig.RICK_AND_MORTY_API_KEY,
+        clientId = BuildConfig.DEMO_CLIENT_ID,
+        tenantId = BuildConfig.DEMO_TENANT_ID,
+        accessToken = BuildConfig.DEMO_ACCESS_TOKEN,
     )
 }

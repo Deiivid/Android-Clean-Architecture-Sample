@@ -1,0 +1,126 @@
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.nio.file.attribute.PosixFilePermission
+import java.util.EnumSet
+import java.util.Properties
+
+def credentialNames = [
+        'RICK_AND_MORTY_API_KEY',
+        'DEMO_CLIENT_ID',
+        'DEMO_TENANT_ID',
+        'DEMO_ACCESS_TOKEN',
+]
+def localSecretsFile = rootProject.file('secrets.properties')
+def hasText = { String value -> value != null && !value.trim().isEmpty() }
+
+def loadLocalSecrets = {
+    def properties = new Properties()
+    if (localSecretsFile.exists()) {
+        localSecretsFile.withInputStream { properties.load(it) }
+    }
+    properties
+}
+
+def sourceOf = { String name, Properties localSecrets ->
+    if (hasText(System.getenv(name))) return 'environment'
+    if (hasText(rootProject.findProperty(name)?.toString())) return 'Gradle property'
+    if (hasText(localSecrets.getProperty(name))) return 'secrets.properties'
+    'missing'
+}
+
+def writeLocalSecrets = { Properties properties ->
+    def parent = localSecretsFile.parentFile.toPath()
+    def temporary = Files.createTempFile(parent, '.secrets-', '.properties')
+    try {
+        Files.newOutputStream(temporary).withCloseable { output ->
+            properties.store(output, 'Local credentials. Never commit this file.')
+        }
+        try {
+            Files.setPosixFilePermissions(
+                    temporary,
+                    EnumSet.of(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE),
+            )
+        } catch (UnsupportedOperationException ignored) {
+            // POSIX permissions are unavailable on some development platforms.
+        }
+
+        try {
+            Files.move(
+                    temporary,
+                    localSecretsFile.toPath(),
+                    StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING,
+            )
+        } catch (AtomicMoveNotSupportedException ignored) {
+            Files.move(temporary, localSecretsFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        }
+    } finally {
+        Files.deleteIfExists(temporary)
+    }
+}
+
+tasks.register('secretsStatus') {
+    group = 'onboarding'
+    description = 'Reports configuration sources without printing any values.'
+    doNotTrackState('Reads local and environment configuration at execution time.')
+
+    doLast {
+        def localSecrets = loadLocalSecrets()
+        def baseUrlSource = hasText(System.getenv('RICK_AND_MORTY_BASE_URL'))
+                ? 'environment'
+                : hasText(rootProject.findProperty('RICK_AND_MORTY_BASE_URL')?.toString())
+                ? 'Gradle property'
+                : 'safe default'
+
+        logger.lifecycle("RICK_AND_MORTY_BASE_URL: ${baseUrlSource}")
+        credentialNames.each { name ->
+            logger.lifecycle("${name}: ${sourceOf(name, localSecrets)}")
+        }
+    }
+}
+
+tasks.register('verifyEnvironmentVariables') {
+    group = 'verification'
+    description = 'Fails when a demo credential is not configured; never prints values.'
+    doNotTrackState('Reads local and environment configuration at execution time.')
+
+    doLast {
+        def localSecrets = loadLocalSecrets()
+        def missing = credentialNames.findAll { sourceOf(it, localSecrets) == 'missing' }
+        if (!missing.isEmpty()) {
+            throw new GradleException(
+                    "Missing configuration: ${missing.join(', ')}. " +
+                            'Provide environment variables or run importSecretsFromEnvironment.',
+            )
+        }
+        logger.lifecycle("Verified ${credentialNames.size()} credential names; values were not printed.")
+    }
+}
+
+tasks.register('importSecretsFromEnvironment') {
+    group = 'onboarding'
+    description = 'Imports configured credential environment variables into ignored secrets.properties.'
+    doNotTrackState('Reads secrets from the execution environment and writes an ignored local file.')
+
+    doLast {
+        def localSecrets = loadLocalSecrets()
+        def imported = credentialNames.findAll { name ->
+            def value = System.getenv(name)
+            if (hasText(value)) {
+                localSecrets.setProperty(name, value)
+                return true
+            }
+            false
+        }
+
+        if (imported.isEmpty()) {
+            throw new GradleException(
+                    "No supported credential variables were found. Expected: ${credentialNames.join(', ')}",
+            )
+        }
+
+        writeLocalSecrets(localSecrets)
+        logger.lifecycle("Imported ${imported.size()} values into secrets.properties; values were not printed.")
+    }
+}
