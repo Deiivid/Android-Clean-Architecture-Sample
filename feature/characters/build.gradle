@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = 'com.example.rickymortydn.feature.characters'
+    namespace = 'es.davidnavarro.androidcleanarchitecture.feature.characters'
     compileSdk {
         version = release(36)
     }
@@ -15,6 +15,7 @@ android {
         minSdk {
             version = release(30)
         }
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -27,11 +28,15 @@ android {
 }
 
 dependencies {
+    implementation project(':core:designsystem')
     implementation project(':core:domain')
     implementation project(':core:model')
 
     implementation platform(libs.androidx.compose.bom)
+    implementation libs.androidx.activity.compose
     implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material.icons.core
+    implementation libs.androidx.compose.material.icons.extended
     implementation libs.androidx.compose.material3
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.ui.tooling.preview
@@ -46,5 +51,11 @@ dependencies {
     testImplementation project(':core:testing')
     testImplementation libs.turbine
 
+    androidTestImplementation platform(libs.androidx.compose.bom)
+    androidTestImplementation libs.androidx.compose.ui.test.junit4
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.androidx.test.runner
+
     debugImplementation libs.androidx.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.test.manifest
 }

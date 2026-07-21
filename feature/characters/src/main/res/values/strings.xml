@@ -1,20 +1,51 @@
 <resources>
     <string name="characters_title">Personajes</string>
-    <string name="characters_subtitle">Clean Architecture · Compose · Hilt</string>
+    <string name="characters_subtitle">Ciudadanos del multiverso.</string>
+    <string name="characters_loading">Cargando personajes…</string>
+    <string name="characters_loading_more">Cargando más personajes…</string>
     <string name="characters_empty">No se encontraron personajes.</string>
     <string name="characters_error">No se han podido cargar los personajes.</string>
+    <string name="characters_error_connectivity">No hay conexión. Comprueba tu red y vuelve a intentarlo.</string>
+    <string name="characters_error_service">El servicio no está disponible ahora mismo. Inténtalo de nuevo en unos minutos.</string>
+    <string name="characters_error_format">La respuesta recibida no se ha podido interpretar.</string>
     <string name="characters_retry">Reintentar</string>
     <plurals name="characters_loaded">
         <item quantity="one">%1$d de %2$d personaje</item>
         <item quantity="other">%1$d de %2$d personajes</item>
     </plurals>
-    <string name="characters_load_more">Cargar más personajes</string>
     <string name="characters_load_more_error">No se pudo cargar la siguiente página.</string>
     <string name="character_image_description">Retrato de %1$s</string>
-    <string name="character_location">Última localización: %1$s</string>
-    <string name="character_origin">Origen: %1$s</string>
+    <string name="character_location_label">Última localización</string>
+    <string name="character_origin_label">Origen</string>
+    <string name="character_episodes_label">Aparece en</string>
+    <string name="character_detail_title">Detalle</string>
+    <string name="character_detail_information">Información</string>
+    <string name="character_detail_appearances">Apariciones</string>
+    <string name="character_status_label">Estado</string>
+    <string name="character_species_label">Especie</string>
+    <string name="character_type_label">Tipo</string>
+    <string name="character_gender_label">Género</string>
+    <string name="character_identifier_label">Identificador</string>
+    <string name="character_identifier_value">#%1$d</string>
+    <string name="character_back">Volver a personajes</string>
+    <string name="character_status_alive">Vivo</string>
+    <string name="character_status_dead">Muerto</string>
+    <string name="character_value_unknown">Desconocido</string>
+    <string name="character_species_human">Humano</string>
+    <string name="character_species_alien">Alienígena</string>
+    <string name="character_species_humanoid">Humanoide</string>
+    <string name="character_species_animal">Animal</string>
+    <string name="character_species_robot">Robot</string>
+    <string name="character_species_mythological">Criatura mitológica</string>
+    <string name="character_gender_male">Masculino</string>
+    <string name="character_gender_female">Femenino</string>
+    <string name="character_gender_genderless">Sin género</string>
     <plurals name="character_episodes">
         <item quantity="one">Aparece en %1$d episodio</item>
         <item quantity="other">Aparece en %1$d episodios</item>
+    </plurals>
+    <plurals name="character_episodes_short">
+        <item quantity="one">%1$d episodio</item>
+        <item quantity="other">%1$d episodios</item>
     </plurals>
 </resources>

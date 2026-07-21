@@ -1,0 +1,51 @@
+<resources>
+    <string name="characters_title">Characters</string>
+    <string name="characters_subtitle">Citizens of the multiverse.</string>
+    <string name="characters_loading">Loading characters…</string>
+    <string name="characters_loading_more">Loading more characters…</string>
+    <string name="characters_empty">No characters found.</string>
+    <string name="characters_error">Characters could not be loaded.</string>
+    <string name="characters_error_connectivity">No connection. Check your network and try again.</string>
+    <string name="characters_error_service">The service is currently unavailable. Try again in a few minutes.</string>
+    <string name="characters_error_format">The response could not be read.</string>
+    <string name="characters_retry">Retry</string>
+    <plurals name="characters_loaded">
+        <item quantity="one">%1$d of %2$d character</item>
+        <item quantity="other">%1$d of %2$d characters</item>
+    </plurals>
+    <string name="characters_load_more_error">The next page could not be loaded.</string>
+    <string name="character_image_description">Portrait of %1$s</string>
+    <string name="character_location_label">Last known location</string>
+    <string name="character_origin_label">Origin</string>
+    <string name="character_episodes_label">Appears in</string>
+    <string name="character_detail_title">Details</string>
+    <string name="character_detail_information">Information</string>
+    <string name="character_detail_appearances">Appearances</string>
+    <string name="character_status_label">Status</string>
+    <string name="character_species_label">Species</string>
+    <string name="character_type_label">Type</string>
+    <string name="character_gender_label">Gender</string>
+    <string name="character_identifier_label">Identifier</string>
+    <string name="character_identifier_value">#%1$d</string>
+    <string name="character_back">Back to characters</string>
+    <string name="character_status_alive">Alive</string>
+    <string name="character_status_dead">Dead</string>
+    <string name="character_value_unknown">Unknown</string>
+    <string name="character_species_human">Human</string>
+    <string name="character_species_alien">Alien</string>
+    <string name="character_species_humanoid">Humanoid</string>
+    <string name="character_species_animal">Animal</string>
+    <string name="character_species_robot">Robot</string>
+    <string name="character_species_mythological">Mythological creature</string>
+    <string name="character_gender_male">Male</string>
+    <string name="character_gender_female">Female</string>
+    <string name="character_gender_genderless">Genderless</string>
+    <plurals name="character_episodes">
+        <item quantity="one">Appears in %1$d episode</item>
+        <item quantity="other">Appears in %1$d episodes</item>
+    </plurals>
+    <plurals name="character_episodes_short">
+        <item quantity="one">%1$d episode</item>
+        <item quantity="other">%1$d episodes</item>
+    </plurals>
+</resources>
