@@ -19,9 +19,9 @@ focused on explicit boundaries, unidirectional data flow and testable architectu
 
 <table>
   <tr>
-    <td><img src="docs/images/characters.png" width="260" alt="Characters catalog screen"></td>
-    <td><img src="docs/images/locations.png" width="260" alt="Locations catalog screen"></td>
-    <td><img src="docs/images/episodes.png" width="260" alt="Episodes catalog screen"></td>
+    <td><img src="docs/images/characters-v2.png" width="260" alt="Characters catalog screen"></td>
+    <td><img src="docs/images/locations-v2.png" width="260" alt="Locations catalog screen"></td>
+    <td><img src="docs/images/episodes-v2.png" width="260" alt="Episodes catalog screen"></td>
   </tr>
   <tr>
     <td align="center"><strong>Characters</strong></td>
@@ -29,9 +29,9 @@ focused on explicit boundaries, unidirectional data flow and testable architectu
     <td align="center"><strong>Episodes</strong></td>
   </tr>
   <tr>
-    <td><img src="docs/images/character-detail.png" width="260" alt="Character detail screen"></td>
-    <td><img src="docs/images/location-detail.png" width="260" alt="Location detail screen"></td>
-    <td><img src="docs/images/episode-detail.png" width="260" alt="Episode detail screen"></td>
+    <td><img src="docs/images/character-detail-v2.png" width="260" alt="Character detail screen"></td>
+    <td><img src="docs/images/location-detail-v2.png" width="260" alt="Location detail screen"></td>
+    <td><img src="docs/images/episode-detail-v2.png" width="260" alt="Episode detail screen"></td>
   </tr>
   <tr>
     <td align="center"><strong>Character detail</strong></td>
