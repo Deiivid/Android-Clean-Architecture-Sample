@@ -1,0 +1,38 @@
+<resources>
+    <string name="locations_title">Locations</string>
+    <string name="locations_subtitle">Planets, dimensions and stations</string>
+    <string name="locations_loading">Loading locations…</string>
+    <string name="locations_loading_more">Loading more locations…</string>
+    <string name="locations_empty">No locations found.</string>
+    <string name="locations_error">Locations could not be loaded.</string>
+    <string name="locations_error_connectivity">No connection. Check your network and try again.</string>
+    <string name="locations_error_service">The service is currently unavailable. Try again in a few minutes.</string>
+    <string name="locations_error_format">The response could not be read.</string>
+    <string name="locations_retry">Retry</string>
+    <plurals name="locations_loaded">
+        <item quantity="one">%1$d of %2$d location</item>
+        <item quantity="other">%1$d of %2$d locations</item>
+    </plurals>
+    <string name="locations_load_more_error">The next page could not be loaded.</string>
+    <string name="location_dimension_label">Dimension</string>
+    <string name="location_type_label">Type</string>
+    <string name="location_residents_label">Residents</string>
+    <string name="location_detail_title">Details</string>
+    <string name="location_detail_information">Information</string>
+    <string name="location_identifier_label">Identifier</string>
+    <string name="location_identifier_value">#%1$d</string>
+    <string name="location_back">Back to locations</string>
+    <string name="location_dimension_replacement">Replacement</string>
+    <string name="location_value_unknown">Unknown</string>
+    <string name="location_value_unknown_feminine">Unknown</string>
+    <string name="location_type_planet">Planet</string>
+    <string name="location_type_cluster">Cluster</string>
+    <string name="location_type_space_station">Space station</string>
+    <string name="location_type_microverse">Microverse</string>
+    <string name="location_type_dimension">Dimension</string>
+    <string name="location_type_dream">Dream</string>
+    <plurals name="location_residents">
+        <item quantity="one">%1$d resident</item>
+        <item quantity="other">%1$d residents</item>
+    </plurals>
+</resources>
