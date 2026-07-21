@@ -5,6 +5,118 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.kover)
 }
 
 apply from: rootProject.file('gradle/environment.gradle')
+
+subprojects {
+    apply plugin: 'org.jlleitschuh.gradle.ktlint'
+    apply plugin: 'org.jetbrains.kotlinx.kover'
+
+    ktlint {
+        android = true
+        outputToConsole = true
+        ignoreFailures = false
+        filter {
+            exclude('**/build/**')
+            exclude('**/generated/**')
+        }
+    }
+}
+
+configurations {
+    detektCli
+}
+
+dependencies {
+    detektCli libs.detekt.cli
+}
+
+tasks.register('detekt', JavaExec) {
+    group = 'verification'
+    description = 'Runs repository-wide Kotlin static analysis.'
+    mainClass = 'io.gitlab.arturbosch.detekt.cli.Main'
+    classpath = configurations.detektCli
+
+    def sourceDirectories = subprojects.collectMany { project ->
+        [
+                project.file('src/main/java'),
+                project.file('src/main/kotlin'),
+                project.file('src/test/java'),
+                project.file('src/test/kotlin'),
+                project.file('src/androidTest/java'),
+                project.file('src/androidTest/kotlin'),
+        ]
+    }.findAll { it.exists() }
+
+    def reportDirectory = layout.buildDirectory.dir('reports/detekt')
+    inputs.files(sourceDirectories)
+    inputs.file(rootProject.file('config/detekt/detekt.yml'))
+    outputs.dir(reportDirectory)
+
+    doFirst {
+        reportDirectory.get().asFile.mkdirs()
+        args(
+                '--input', sourceDirectories.join(','),
+                '--config', rootProject.file('config/detekt/detekt.yml'),
+                '--build-upon-default-config',
+                '--parallel',
+                '--report', "html:${reportDirectory.get().file('detekt.html').asFile}",
+                '--report', "sarif:${reportDirectory.get().file('detekt.sarif').asFile}",
+        )
+    }
+}
+
+dependencies {
+    kover project(':core:domain')
+    kover project(':core:data')
+    kover project(':feature:characters')
+    kover project(':feature:episodes')
+    kover project(':feature:locations')
+}
+
+kover {
+    reports {
+        filters {
+            includes {
+                classes(
+                        'es.davidnavarro.androidcleanarchitecture.core.domain.*',
+                        'es.davidnavarro.androidcleanarchitecture.core.data.mapper.*',
+                        'es.davidnavarro.androidcleanarchitecture.core.data.repository.*',
+                        'es.davidnavarro.androidcleanarchitecture.core.data.network.CredentialsInterceptor',
+                        'es.davidnavarro.androidcleanarchitecture.feature.characters.CharactersUiState*',
+                        'es.davidnavarro.androidcleanarchitecture.feature.characters.CharactersViewModel',
+                        'es.davidnavarro.androidcleanarchitecture.feature.episodes.EpisodesUiState*',
+                        'es.davidnavarro.androidcleanarchitecture.feature.episodes.EpisodesViewModel',
+                        'es.davidnavarro.androidcleanarchitecture.feature.locations.LocationsUiState*',
+                        'es.davidnavarro.androidcleanarchitecture.feature.locations.LocationsViewModel',
+                )
+            }
+            excludes {
+                classes(
+                        '*.BuildConfig',
+                        '*.R',
+                        '*.R$*',
+                        '*.*ScreenKt',
+                        '*.*ThemeKt',
+                        '*.*ColorKt',
+                        '*.*TypeKt',
+                        '*.*_Factory',
+                        '*.*_MembersInjector',
+                        '*.*Hilt*',
+                )
+            }
+        }
+        total {
+            html { onCheck = true }
+            xml { onCheck = true }
+            verify {
+                rule('Application logic') {
+                    minBound(60)
+                }
+            }
+        }
+    }
+}
