@@ -11,7 +11,7 @@ focused on explicit boundaries, unidirectional data flow and testable architectu
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-BOM_2026.06.01-4285F4?logo=jetpackcompose&logoColor=white)
 ![Java](https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk&logoColor=white)
 
-[Screens](#screens) · [Architecture](#architecture) · [Modules](#modules) · [Stack](#technology) · [Run](#getting-started) · [Secrets](#configuration-and-secrets) · [Quality](#quality-gates)
+[Screens](#screens) · [Video](#video-tour) · [Architecture](#architecture) · [Modules](#modules) · [Stack](#technology) · [Run](#getting-started) · [Secrets](#configuration-and-secrets) · [Quality](#quality-gates)
 
 </div>
 
@@ -19,9 +19,9 @@ focused on explicit boundaries, unidirectional data flow and testable architectu
 
 <table>
   <tr>
-    <td><img src="docs/images/characters.png" width="260" alt="Characters catalog screen"></td>
-    <td><img src="docs/images/locations.png" width="260" alt="Locations catalog screen"></td>
-    <td><img src="docs/images/episodes.png" width="260" alt="Episodes catalog screen"></td>
+    <td><img src="docs/images/characters-v2.png" width="260" alt="Characters catalog screen"></td>
+    <td><img src="docs/images/locations-v2.png" width="260" alt="Locations catalog screen"></td>
+    <td><img src="docs/images/episodes-v2.png" width="260" alt="Episodes catalog screen"></td>
   </tr>
   <tr>
     <td align="center"><strong>Characters</strong></td>
@@ -29,9 +29,9 @@ focused on explicit boundaries, unidirectional data flow and testable architectu
     <td align="center"><strong>Episodes</strong></td>
   </tr>
   <tr>
-    <td><img src="docs/images/character-detail.png" width="260" alt="Character detail screen"></td>
-    <td><img src="docs/images/location-detail.png" width="260" alt="Location detail screen"></td>
-    <td><img src="docs/images/episode-detail.png" width="260" alt="Episode detail screen"></td>
+    <td><img src="docs/images/character-detail-v2.png" width="260" alt="Character detail screen"></td>
+    <td><img src="docs/images/location-detail-v2.png" width="260" alt="Location detail screen"></td>
+    <td><img src="docs/images/episode-detail-v2.png" width="260" alt="Episode detail screen"></td>
   </tr>
   <tr>
     <td align="center"><strong>Character detail</strong></td>
@@ -41,6 +41,17 @@ focused on explicit boundaries, unidirectional data flow and testable architectu
 </table>
 
 The app consumes the three catalog resources exposed by the public Rick and Morty API. Each destination owns its state, automatic pagination and retry behavior while route-based navigation preserves destination state. Selecting any character, location or episode opens a detail route from the already loaded model, without a second backend request.
+
+## Video tour
+
+<p align="center">
+  <a href="docs/media/catalog-tour.mp4">
+    <img src="docs/images/catalog-tour-preview.png" width="360" alt="Play the complete app walkthrough">
+  </a>
+  <br>
+  <strong>▶ Watch the complete app walkthrough</strong><br>
+  Characters · Locations · Episodes · All detail screens
+</p>
 
 ## Why this repository exists
 
