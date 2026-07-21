@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = 'com.example.rickymortydn.core.data'
+    namespace = 'es.davidnavarro.androidcleanarchitecture.core.data'
     compileSdk {
         version = release(36)
     }
@@ -33,5 +33,6 @@ dependencies {
     implementation libs.retrofit.gson
 
     testImplementation libs.junit
+    testImplementation libs.coroutines.test
     testImplementation libs.okhttp.mockwebserver
 }

@@ -1,0 +1,26 @@
+plugins {
+    alias(libs.plugins.android.library)
+}
+
+android {
+    namespace = 'es.davidnavarro.androidcleanarchitecture.core.designsystem'
+    compileSdk {
+        version = release(36)
+    }
+
+    defaultConfig {
+        minSdk {
+            version = release(30)
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.androidx.compose.ui
+}

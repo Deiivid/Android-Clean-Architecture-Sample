@@ -39,7 +39,7 @@ app ──> feature:* ──> core:domain ──> core:model
 Use the narrowest useful task while iterating. Before handoff of cross-module changes run:
 
 ```bash
-./gradlew test lintDebug assembleDebug --warning-mode all
+./gradlew test lintDebug detekt ktlintCheck :koverVerify assembleDebug --warning-mode all
 ```
 
 Do not report a command as passing unless it actually ran.

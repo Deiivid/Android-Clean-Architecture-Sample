@@ -1,16 +1,28 @@
 <resources>
     <string name="episodes_title">Episodios</string>
-    <string name="episodes_subtitle">Todas las temporadas de la API</string>
+    <string name="episodes_subtitle">Transmisiones y aventuras multiversales</string>
+    <string name="episodes_loading">Cargando episodios…</string>
+    <string name="episodes_loading_more">Cargando más episodios…</string>
     <string name="episodes_empty">No se encontraron episodios.</string>
     <string name="episodes_error">No se han podido cargar los episodios.</string>
+    <string name="episodes_error_connectivity">No hay conexión. Comprueba tu red y vuelve a intentarlo.</string>
+    <string name="episodes_error_service">El servicio no está disponible ahora mismo. Inténtalo de nuevo en unos minutos.</string>
+    <string name="episodes_error_format">La respuesta recibida no se ha podido interpretar.</string>
     <string name="episodes_retry">Reintentar</string>
     <plurals name="episodes_loaded">
         <item quantity="one">%1$d de %2$d episodio</item>
         <item quantity="other">%1$d de %2$d episodios</item>
     </plurals>
-    <string name="episodes_load_more">Cargar más episodios</string>
     <string name="episodes_load_more_error">No se pudo cargar la siguiente página.</string>
-    <string name="episode_air_date">Emisión: %1$s</string>
+    <string name="episode_air_date_label">Fecha de emisión</string>
+    <string name="episode_code_label">Código</string>
+    <string name="episode_characters_label">Personajes</string>
+    <string name="episode_detail_title">Detalle</string>
+    <string name="episode_detail_information">Información</string>
+    <string name="episode_transmission_label">Transmisión del episodio</string>
+    <string name="episode_identifier_label">Identificador</string>
+    <string name="episode_identifier_value">#%1$d</string>
+    <string name="episode_back">Volver a episodios</string>
     <plurals name="episode_characters">
         <item quantity="one">%1$d personaje</item>
         <item quantity="other">%1$d personajes</item>

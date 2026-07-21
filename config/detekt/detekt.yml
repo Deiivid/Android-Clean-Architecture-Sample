@@ -1,0 +1,18 @@
+config:
+  validation: true
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - Composable
+
+style:
+  MagicNumber:
+    excludes:
+      - '**/ui/theme/**'
+      - '**/*Screen.kt'
+      - '**/src/test/**'
+      - '**/src/androidTest/**'
+  UnusedPrivateMember:
+    ignoreAnnotated:
+      - Preview

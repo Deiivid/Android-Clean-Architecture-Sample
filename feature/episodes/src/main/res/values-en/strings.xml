@@ -1,0 +1,30 @@
+<resources>
+    <string name="episodes_title">Episodes</string>
+    <string name="episodes_subtitle">Multiverse transmissions and adventures</string>
+    <string name="episodes_loading">Loading episodes…</string>
+    <string name="episodes_loading_more">Loading more episodes…</string>
+    <string name="episodes_empty">No episodes found.</string>
+    <string name="episodes_error">Episodes could not be loaded.</string>
+    <string name="episodes_error_connectivity">No connection. Check your network and try again.</string>
+    <string name="episodes_error_service">The service is currently unavailable. Try again in a few minutes.</string>
+    <string name="episodes_error_format">The response could not be read.</string>
+    <string name="episodes_retry">Retry</string>
+    <plurals name="episodes_loaded">
+        <item quantity="one">%1$d of %2$d episode</item>
+        <item quantity="other">%1$d of %2$d episodes</item>
+    </plurals>
+    <string name="episodes_load_more_error">The next page could not be loaded.</string>
+    <string name="episode_air_date_label">Air date</string>
+    <string name="episode_code_label">Code</string>
+    <string name="episode_characters_label">Characters</string>
+    <string name="episode_detail_title">Details</string>
+    <string name="episode_detail_information">Information</string>
+    <string name="episode_transmission_label">Episode transmission</string>
+    <string name="episode_identifier_label">Identifier</string>
+    <string name="episode_identifier_value">#%1$d</string>
+    <string name="episode_back">Back to episodes</string>
+    <plurals name="episode_characters">
+        <item quantity="one">%1$d character</item>
+        <item quantity="other">%1$d characters</item>
+    </plurals>
+</resources>

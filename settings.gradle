@@ -12,9 +12,10 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "RickyMortyDN"
+rootProject.name = "Android-Clean-Architecture-Sample"
 include ':app'
 include ':core:model'
+include ':core:designsystem'
 include ':core:testing'
 include ':core:domain'
 include ':core:data'
