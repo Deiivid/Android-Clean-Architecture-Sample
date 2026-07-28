@@ -1,0 +1,121 @@
+plugins {
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+}
+
+def generatedConfigurationDirectory = layout.buildDirectory.dir(
+        'generated/catalogConfiguration/commonMain/kotlin'
+)
+def kotlinString = { String value ->
+    "\"${value.replace('\\', '\\\\').replace('\"', '\\\"')
+            .replace('\n', '\\n').replace('\r', '\\r')}\""
+}
+def generateCatalogConfiguration = tasks.register('generateCatalogConfiguration') {
+    outputs.dir(generatedConfigurationDirectory)
+    doNotTrackState('Configuration can contain credentials and must not enter Gradle task history.')
+
+    doLast {
+        def packageDirectory = generatedConfigurationDirectory.get().dir(
+                'es/davidnavarro/androidcleanarchitecture/config'
+        ).asFile
+        packageDirectory.mkdirs()
+        def destination = new File(packageDirectory, 'GeneratedCatalogConfiguration.kt')
+        def baseUrl = rootProject.ext.resolveCatalogConfigurationValue(
+                'RICK_AND_MORTY_BASE_URL',
+                'https://rickandmortyapi.com/api/',
+        )
+        def apiKey = rootProject.ext.resolveCatalogCredentialValue('RICK_AND_MORTY_API_KEY')
+        def clientId = rootProject.ext.resolveCatalogCredentialValue('DEMO_CLIENT_ID')
+        def tenantId = rootProject.ext.resolveCatalogCredentialValue('DEMO_TENANT_ID')
+        def accessToken = rootProject.ext.resolveCatalogCredentialValue('DEMO_ACCESS_TOKEN')
+
+        destination.text = """\
+package es.davidnavarro.androidcleanarchitecture.config
+
+internal object GeneratedCatalogConfiguration {
+    const val BASE_URL: String = ${kotlinString(baseUrl)}
+    const val API_KEY: String = ${kotlinString(apiKey)}
+    const val CLIENT_ID: String = ${kotlinString(clientId)}
+    const val TENANT_ID: String = ${kotlinString(tenantId)}
+    const val ACCESS_TOKEN: String = ${kotlinString(accessToken)}
+}
+"""
+    }
+}
+
+kotlin {
+    android {
+        namespace = 'es.davidnavarro.androidcleanarchitecture.shared'
+        compileSdk = 36
+        minSdk = 30
+        androidResources.enable = true
+        withHostTestBuilder {}.configure {}
+        withDeviceTestBuilder {
+            it.sourceSetTreeName = "test"
+        }
+        compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+
+    def iosTargets = [
+            iosArm64(),
+            iosSimulatorArm64(),
+    ]
+    iosTargets.each { target ->
+        target.binaries.framework {
+            baseName = 'Shared'
+            isStatic = true
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            kotlin.srcDir(generateCatalogConfiguration)
+            dependencies {
+                implementation project(':core:data')
+                implementation project(':core:designsystem')
+                implementation project(':core:domain')
+                implementation project(':core:model')
+                implementation project(':feature:characters')
+                implementation project(':feature:episodes')
+                implementation project(':feature:locations')
+
+                implementation compose.components.resources
+                implementation compose.foundation
+                implementation compose.material3
+                implementation compose.materialIconsExtended
+                implementation compose.runtime
+                implementation compose.ui
+                implementation libs.coil.network.ktor3
+                implementation libs.jetbrains.lifecycle.viewmodel.compose
+                implementation libs.jetbrains.navigation.compose
+                implementation libs.kotlinx.serialization.json
+            }
+        }
+        iosMain {
+            dependencies {
+                implementation compose.ui
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test')
+            }
+        }
+        androidDeviceTest {
+            dependencies {
+                implementation libs.androidx.compose.ui.test.junit4
+                implementation libs.androidx.compose.ui.test.manifest
+                implementation libs.androidx.test.ext.junit
+                implementation libs.androidx.test.runner
+            }
+        }
+    }
+}
+
+compose.resources {
+    publicResClass = true
+    packageOfResClass = 'es.davidnavarro.androidcleanarchitecture.shared.generated.resources'
+}

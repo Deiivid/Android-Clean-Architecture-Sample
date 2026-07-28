@@ -1,12 +1,24 @@
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
 }
 
 kotlin {
-    jvmToolchain(17)
-}
+    android {
+        namespace = 'es.davidnavarro.androidcleanarchitecture.core.testing'
+        compileSdk = 36
+        minSdk = 30
+        withHostTestBuilder {}.configure {}
+        compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+    iosArm64()
+    iosSimulatorArm64()
 
-dependencies {
-    api libs.coroutines.test
-    api libs.junit
+    sourceSets {
+        commonMain {
+            dependencies {
+                api libs.coroutines.test
+            }
+        }
+    }
 }

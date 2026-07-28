@@ -1,4 +1,4 @@
-name: Android CI
+name: Mobile CI
 
 on:
   push:
@@ -9,13 +9,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: android-ci-${{ github.ref }}
+  group: mobile-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
+  android:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Check out repository
@@ -39,8 +39,52 @@ jobs:
           RICK_AND_MORTY_API_KEY: ${{ secrets.RICK_AND_MORTY_API_KEY }}
           DEMO_ACCESS_TOKEN: ${{ secrets.DEMO_ACCESS_TOKEN }}
 
-      - name: Verify tests, quality and assembly
-        run: ./gradlew test lintDebug detekt ktlintCheck :koverVerify assembleDebug --warning-mode all
+      - name: Verify Android tests, quality and assembly
+        run: >-
+          ./gradlew testAndroidHostTest lintDebug detekt ktlintCheck
+          :koverVerify :app:assembleDebug --warning-mode all
+        env:
+          RICK_AND_MORTY_BASE_URL: ${{ vars.RICK_AND_MORTY_BASE_URL }}
+          DEMO_CLIENT_ID: ${{ vars.DEMO_CLIENT_ID }}
+          DEMO_TENANT_ID: ${{ vars.DEMO_TENANT_ID }}
+          RICK_AND_MORTY_API_KEY: ${{ secrets.RICK_AND_MORTY_API_KEY }}
+          DEMO_ACCESS_TOKEN: ${{ secrets.DEMO_ACCESS_TOKEN }}
+
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Verify shared iOS tests and framework
+        run: >-
+          ./gradlew iosSimulatorArm64Test
+          :shared:linkDebugFrameworkIosSimulatorArm64
+          :shared:linkDebugFrameworkIosArm64 --warning-mode all
+        env:
+          RICK_AND_MORTY_BASE_URL: ${{ vars.RICK_AND_MORTY_BASE_URL }}
+          DEMO_CLIENT_ID: ${{ vars.DEMO_CLIENT_ID }}
+          DEMO_TENANT_ID: ${{ vars.DEMO_TENANT_ID }}
+          RICK_AND_MORTY_API_KEY: ${{ secrets.RICK_AND_MORTY_API_KEY }}
+          DEMO_ACCESS_TOKEN: ${{ secrets.DEMO_ACCESS_TOKEN }}
+
+      - name: Build unsigned iOS simulator app
+        run: >-
+          xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp
+          -configuration Debug -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO build
         env:
           RICK_AND_MORTY_BASE_URL: ${{ vars.RICK_AND_MORTY_BASE_URL }}
           DEMO_CLIENT_ID: ${{ vars.DEMO_CLIENT_ID }}

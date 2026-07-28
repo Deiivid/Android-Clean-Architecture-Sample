@@ -1,40 +1,6 @@
-import com.android.build.api.variant.BuildConfigField
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)
-}
-
-def secretProperties = new Properties()
-def secretsFile = rootProject.file("secrets.properties")
-if (secretsFile.exists()) {
-    secretsFile.withInputStream { secretProperties.load(it) }
-}
-
-def hasText = { String value -> value != null && !value.trim().isEmpty() }
-
-def credentialValue = { String name ->
-    def environmentValue = providers.environmentVariable(name).orNull
-    if (hasText(environmentValue)) return environmentValue
-
-    def gradleValue = providers.gradleProperty(name).orNull
-    if (hasText(gradleValue)) return gradleValue
-
-    secretProperties.getProperty(name, "")
-}
-
-def configurationValue = { String name, String fallback ->
-    def environmentValue = providers.environmentVariable(name).orNull
-    if (hasText(environmentValue)) return environmentValue
-
-    def gradleValue = providers.gradleProperty(name).orNull
-    hasText(gradleValue) ? gradleValue : fallback
-}
-
-def quoted = { String value ->
-    "\"${value.replace('\\', '\\\\').replace('\"', '\\\"')}\""
 }
 
 android {
@@ -55,14 +21,16 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     buildFeatures {
         compose = true
-        buildConfig = true
     }
+
     packaging {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
@@ -70,60 +38,13 @@ android {
     }
 }
 
-androidComponents {
-    onVariants(selector().all()) { variant ->
-        variant.buildConfigFields.put("RICK_AND_MORTY_BASE_URL", new BuildConfigField(
-                "String",
-                quoted(configurationValue("RICK_AND_MORTY_BASE_URL", "https://rickandmortyapi.com/api/")),
-                null
-        ))
-        variant.buildConfigFields.put("RICK_AND_MORTY_API_KEY", new BuildConfigField(
-                "String",
-                quoted(credentialValue("RICK_AND_MORTY_API_KEY")),
-                null
-        ))
-        variant.buildConfigFields.put("DEMO_CLIENT_ID", new BuildConfigField(
-                "String",
-                quoted(credentialValue("DEMO_CLIENT_ID")),
-                null
-        ))
-        variant.buildConfigFields.put("DEMO_TENANT_ID", new BuildConfigField(
-                "String",
-                quoted(credentialValue("DEMO_TENANT_ID")),
-                null
-        ))
-        variant.buildConfigFields.put("DEMO_ACCESS_TOKEN", new BuildConfigField(
-                "String",
-                quoted(credentialValue("DEMO_ACCESS_TOKEN")),
-                null
-        ))
-    }
-}
-
 dependencies {
-    implementation project(':core:designsystem')
-    implementation project(':core:data')
-    implementation project(':core:domain')
-    implementation project(':feature:characters')
-    implementation project(':feature:episodes')
-    implementation project(':feature:locations')
-
-    implementation platform(libs.androidx.compose.bom)
+    implementation project(':shared')
     implementation libs.androidx.activity.compose
-    implementation libs.androidx.compose.material.icons.core
-    implementation libs.androidx.compose.material3
-    implementation libs.androidx.compose.ui
-    implementation libs.androidx.navigation.compose
-    implementation libs.hilt.android
-    ksp libs.hilt.compiler
 
-    testImplementation libs.junit
-
-    androidTestImplementation platform(libs.androidx.compose.bom)
     androidTestImplementation libs.androidx.compose.ui.test.junit4
     androidTestImplementation libs.androidx.test.ext.junit
     androidTestImplementation libs.androidx.test.runner
 
-    debugImplementation libs.androidx.compose.ui.tooling
     debugImplementation libs.androidx.compose.ui.test.manifest
 }
