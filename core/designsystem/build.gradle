@@ -1,26 +1,27 @@
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.kotlin.compose)
 }
 
-android {
-    namespace = 'es.davidnavarro.androidcleanarchitecture.core.designsystem'
-    compileSdk {
-        version = release(36)
+kotlin {
+    android {
+        namespace = 'es.davidnavarro.androidcleanarchitecture.core.designsystem'
+        compileSdk = 36
+        minSdk = 30
+        androidResources.enable = true
+        withHostTestBuilder {}.configure {}
+        compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
+    iosArm64()
+    iosSimulatorArm64()
 
-    defaultConfig {
-        minSdk {
-            version = release(30)
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation compose.ui
+            }
         }
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-}
-
-dependencies {
-    implementation platform(libs.androidx.compose.bom)
-    implementation libs.androidx.compose.ui
 }

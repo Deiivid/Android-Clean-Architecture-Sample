@@ -1,17 +1,17 @@
-# Secrets on Android
+# Configuration and secrets on Android and iOS
 
-This project keeps development credentials out of source control. Gradle resolves environment variables first, then Gradle properties, then ignored `secrets.properties`. It generates `BuildConfig` fields, the app maps them to typed configuration, and Hilt injects credentials into `CredentialsInterceptor`.
+This project keeps development credentials out of source control. Gradle resolves environment variables first, then Gradle properties, then ignored `secrets.properties`. It generates a private Kotlin configuration object for the shared module, which maps values to typed data-layer configuration used by both mobile clients.
 
 ```text
 CI environment / Gradle properties / secrets.properties
         ↓
-BuildConfig
+GeneratedCatalogConfiguration
         ↓
-AppConfigurationModule
+NetworkConfiguration + ApiCredentials
         ↓
-ApiCredentials
+Ktor default request → redacted credential headers
         ↓
-CredentialsInterceptor → redacted HTTP headers
+OkHttp engine (Android) / Darwin engine (iOS)
 ```
 
 ## Setup
@@ -27,13 +27,13 @@ The public base URL resolves from `RICK_AND_MORTY_BASE_URL` as environment varia
 
 | Name | GitHub type | Local source | Required | Consumer |
 |---|---|---|---|---|
-| `RICK_AND_MORTY_BASE_URL` | Variable | Environment or Gradle property | No; public default | Retrofit base URL |
+| `RICK_AND_MORTY_BASE_URL` | Variable | Environment or Gradle property | No; public default | Ktor base URL |
 | `RICK_AND_MORTY_API_KEY` | Secret | Environment, Gradle property or `secrets.properties` | No | `X-Api-Key` |
 | `DEMO_CLIENT_ID` | Variable | Environment, Gradle property or `secrets.properties` | No | `X-Client-Id` |
 | `DEMO_TENANT_ID` | Variable | Environment, Gradle property or `secrets.properties` | No | `X-Tenant-Id` |
 | `DEMO_ACCESS_TOKEN` | Secret | Environment, Gradle property or `secrets.properties` | No | `Authorization: Bearer …` |
 
-Blank values are omitted. OkHttp logging explicitly redacts every credential header.
+Blank values are omitted. Ktor logging explicitly sanitizes every credential header. Generated configuration lives under `shared/build/` and is never a source-controlled file.
 
 ## Gradle tasks
 
@@ -64,6 +64,6 @@ Use `gh secret set NAME` for sensitive values so the CLI prompts for the value r
 
 ## Important limitation
 
-An Android APK runs on a user-controlled device. Any value compiled into `BuildConfig`, resources, native code or an obfuscation layer can eventually be extracted. This pattern prevents accidental Git exposure; it does not turn a client-side value into a true secret.
+Android and iOS apps run on user-controlled devices. Any value compiled into Kotlin, an APK, an Apple framework, resources, native code or an obfuscation layer can eventually be extracted. This pattern prevents accidental Git and log exposure; it does not turn a client-side value into a true secret.
 
 Long-lived private keys, service-account credentials and OAuth client secrets must stay on a trusted backend. Mobile clients should receive short-lived, scoped tokens after authentication and use platform-backed storage only for protecting tokens at rest.

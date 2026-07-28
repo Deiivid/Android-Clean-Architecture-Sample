@@ -1,38 +1,49 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.kotlin.serialization)
 }
 
-android {
-    namespace = 'es.davidnavarro.androidcleanarchitecture.core.data'
-    compileSdk {
-        version = release(36)
+kotlin {
+    android {
+        namespace = 'es.davidnavarro.androidcleanarchitecture.core.data'
+        compileSdk = 36
+        minSdk = 30
+        withHostTestBuilder {}.configure {}
+        compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
+    iosArm64()
+    iosSimulatorArm64()
 
-    defaultConfig {
-        minSdk {
-            version = release(30)
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation project(':core:domain')
+                implementation project(':core:model')
+                implementation libs.coroutines.core
+                implementation libs.ktor.client.content.negotiation
+                implementation libs.ktor.client.core
+                implementation libs.ktor.client.logging
+                implementation libs.ktor.serialization.json
+                implementation libs.kotlinx.serialization.json
+            }
+        }
+        androidMain {
+            dependencies {
+                implementation libs.ktor.client.okhttp
+            }
+        }
+        iosMain {
+            dependencies {
+                implementation libs.ktor.client.darwin
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation libs.coroutines.test
+                implementation libs.ktor.client.mock
+            }
         }
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-}
-
-dependencies {
-    implementation project(':core:domain')
-    implementation project(':core:model')
-    implementation libs.hilt.android
-    ksp libs.hilt.compiler
-    implementation libs.okhttp
-    implementation libs.okhttp.logging
-    implementation libs.retrofit
-    implementation libs.retrofit.gson
-
-    testImplementation libs.junit
-    testImplementation libs.coroutines.test
-    testImplementation libs.okhttp.mockwebserver
 }

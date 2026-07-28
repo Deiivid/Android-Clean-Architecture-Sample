@@ -22,6 +22,26 @@ def loadLocalSecrets = {
     properties
 }
 
+rootProject.ext.resolveCatalogConfigurationValue = { String name, String fallback ->
+    def environmentValue = System.getenv(name)
+    if (hasText(environmentValue)) return environmentValue
+
+    def gradleValue = rootProject.findProperty(name)?.toString()
+    if (hasText(gradleValue)) return gradleValue
+
+    fallback
+}
+
+rootProject.ext.resolveCatalogCredentialValue = { String name ->
+    def environmentValue = System.getenv(name)
+    if (hasText(environmentValue)) return environmentValue
+
+    def gradleValue = rootProject.findProperty(name)?.toString()
+    if (hasText(gradleValue)) return gradleValue
+
+    loadLocalSecrets().getProperty(name, '')
+}
+
 def sourceOf = { String name, Properties localSecrets ->
     if (hasText(System.getenv(name))) return 'environment'
     if (hasText(rootProject.findProperty(name)?.toString())) return 'Gradle property'

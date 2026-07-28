@@ -1,10 +1,10 @@
 plugins {
     alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.android.library) apply false
-    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.android.kotlin.multiplatform.library) apply false
+    alias(libs.plugins.jetbrains.compose) apply false
     alias(libs.plugins.kotlin.compose) apply false
-    alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.kover)
 }
@@ -44,10 +44,17 @@ tasks.register('detekt', JavaExec) {
         [
                 project.file('src/main/java'),
                 project.file('src/main/kotlin'),
+                project.file('src/commonMain/kotlin'),
+                project.file('src/androidMain/kotlin'),
+                project.file('src/iosMain/kotlin'),
                 project.file('src/test/java'),
                 project.file('src/test/kotlin'),
+                project.file('src/commonTest/kotlin'),
+                project.file('src/androidHostTest/kotlin'),
+                project.file('src/iosTest/kotlin'),
                 project.file('src/androidTest/java'),
                 project.file('src/androidTest/kotlin'),
+                project.file('src/androidDeviceTest/kotlin'),
         ]
     }.findAll { it.exists() }
 
@@ -70,6 +77,7 @@ tasks.register('detekt', JavaExec) {
 }
 
 dependencies {
+    kover project(':shared')
     kover project(':core:domain')
     kover project(':core:data')
     kover project(':feature:characters')
@@ -85,7 +93,7 @@ kover {
                         'es.davidnavarro.androidcleanarchitecture.core.domain.*',
                         'es.davidnavarro.androidcleanarchitecture.core.data.mapper.*',
                         'es.davidnavarro.androidcleanarchitecture.core.data.repository.*',
-                        'es.davidnavarro.androidcleanarchitecture.core.data.network.CredentialsInterceptor',
+                        'es.davidnavarro.androidcleanarchitecture.core.data.network.CredentialHeaders*',
                         'es.davidnavarro.androidcleanarchitecture.feature.characters.CharactersUiState*',
                         'es.davidnavarro.androidcleanarchitecture.feature.characters.CharactersViewModel',
                         'es.davidnavarro.androidcleanarchitecture.feature.episodes.EpisodesUiState*',
@@ -103,9 +111,7 @@ kover {
                         '*.*ThemeKt',
                         '*.*ColorKt',
                         '*.*TypeKt',
-                        '*.*_Factory',
-                        '*.*_MembersInjector',
-                        '*.*Hilt*',
+                        '*.*MainViewControllerKt',
                 )
             }
         }

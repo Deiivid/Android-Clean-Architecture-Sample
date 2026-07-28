@@ -2,13 +2,14 @@
 
 # Rick and Morty · Clean Architecture Compose
 
-A modular Android reference implementation built with Kotlin and Jetpack Compose,
-focused on explicit boundaries, unidirectional data flow and testable architecture.
+A Kotlin Multiplatform reference implementation for Android and iOS with one shared
+Compose UI, explicit boundaries, unidirectional data flow and testable architecture.
 
-[![Android CI](https://github.com/Deiivid/Android-Clean-Architecture-Sample/actions/workflows/ci.yml/badge.svg)](https://github.com/Deiivid/Android-Clean-Architecture-Sample/actions/workflows/ci.yml)
+[![Mobile CI](https://github.com/Deiivid/Android-Clean-Architecture-Sample/actions/workflows/ci.yml/badge.svg)](https://github.com/Deiivid/Android-Clean-Architecture-Sample/actions/workflows/ci.yml)
 ![Android API](https://img.shields.io/badge/Android-API_30--36-3DDC84?logo=android&logoColor=white)
-![Kotlin](https://img.shields.io/badge/Kotlin-2.2.10-7F52FF?logo=kotlin&logoColor=white)
-![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-BOM_2026.06.01-4285F4?logo=jetpackcompose&logoColor=white)
+![iOS](https://img.shields.io/badge/iOS-15%2B-000000?logo=apple&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.3.21-7F52FF?logo=kotlin&logoColor=white)
+![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform-1.10.3-4285F4?logo=jetpackcompose&logoColor=white)
 ![Java](https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk&logoColor=white)
 
 [Screens](#screens) · [Video](#video-tour) · [Architecture](#architecture) · [Modules](#modules) · [Stack](#technology) · [Run](#getting-started) · [Secrets](#configuration-and-secrets) · [Quality](#quality-gates)
@@ -40,7 +41,7 @@ focused on explicit boundaries, unidirectional data flow and testable architectu
   </tr>
 </table>
 
-The app consumes the three catalog resources exposed by the public Rick and Morty API. Each destination owns its state, automatic pagination and retry behavior while route-based navigation preserves destination state. Selecting any character, location or episode opens a detail route from the already loaded model, without a second backend request.
+The Android and iOS apps render these same shared screens and consume the three catalog resources exposed by the public Rick and Morty API. Each destination owns its state, automatic pagination and retry behavior while route-based navigation preserves destination state. Selecting any character, location or episode opens a detail route from the already loaded model, without a second backend request.
 
 ## Video tour
 
@@ -55,29 +56,34 @@ The app consumes the three catalog resources exposed by the public Rick and Mort
 
 ## Why this repository exists
 
-This project is intentionally small enough to understand and structured enough to scale. It demonstrates the decisions that usually matter when an Android codebase grows:
+This project is intentionally small enough to understand and structured enough to scale. It demonstrates the decisions that usually matter when a mobile codebase grows:
 
-- Pure Kotlin model and domain modules with no Android framework dependency.
+- Shared Compose UI, navigation, resources, presentation, domain and data code for Android and iOS.
+- Thin platform hosts: one Android `Activity` and one SwiftUI wrapper.
+- Pure Kotlin model and domain modules with no platform framework dependency.
 - Repository contracts owned by the domain and implemented in the data layer.
 - Typed `CatalogResult`/`CatalogError` failures instead of leaking exceptions across boundaries.
 - Stateless Compose screens driven by immutable `StateFlow` UI state.
 - Automatic server pagination with duplicate-request protection, append errors and retry.
-- Route-based Navigation Compose with nested list/detail flows for every catalog.
+- Route-based Navigation Compose with nested list/detail flows for every catalog on both platforms.
 - Explicit DTO-to-domain mappers instead of leaking network models into the UI.
 - Spanish/English resource-backed copy, localized API values, large-text layouts and TalkBack semantics.
+- Ktor networking with OkHttp on Android and Darwin on iOS.
 - Environment-aware configuration without committing local credentials.
-- JVM, instrumented Compose, lint, static-analysis, formatting, coverage and assembly checks.
+- Android host and iOS simulator tests, Android instrumentation, lint, static analysis, formatting, coverage and both host builds.
 - Design, testing and AI-agent instructions versioned with the code.
 
 ## Architecture
 
-The dependency rule points inward. Domain code does not know Retrofit, Compose, Hilt or Android; outer layers depend on its contracts.
+The dependency rule points inward. Domain code does not know Ktor, Compose, Android or iOS; outer layers depend on its contracts.
 
 ```mermaid
 flowchart LR
-    APP[":app<br/>composition root + routes"] --> FEATURES[":feature:*<br/>Compose + ViewModels"]
-    APP --> DATA[":core:data<br/>repositories + network"]
-    APP --> DOMAIN[":core:domain<br/>contracts + use cases"]
+    ANDROID[":app<br/>Android host"] --> SHARED[":shared<br/>composition root + routes"]
+    IOS["iosApp<br/>SwiftUI host"] --> SHARED
+    SHARED --> FEATURES[":feature:*<br/>shared Compose + ViewModels"]
+    SHARED --> DATA[":core:data<br/>repositories + Ktor"]
+    SHARED --> DOMAIN[":core:domain<br/>contracts + use cases"]
     FEATURES --> DOMAIN
     FEATURES --> MODEL[":core:model<br/>entities"]
     DATA --> DOMAIN
@@ -86,7 +92,7 @@ flowchart LR
     DATA -. "HTTP" .-> API["Rick and Morty API"]
 ```
 
-In plain terms: `core:domain` defines what data the application needs through repository interfaces; `core:data` implements those interfaces; and `app` is the composition root where Hilt connects both sides. The domain never depends on data.
+In plain terms: `core:domain` defines what data the application needs through repository interfaces; `core:data` implements those interfaces; and `shared` connects both sides and owns the product UI. The Android and iOS hosts only start that shared application. The domain never depends on data.
 
 The presentation layer follows unidirectional data flow:
 
@@ -101,13 +107,16 @@ Every feature handles initial loading, content, empty results, initial errors, i
 
 | Module | Responsibility | Key dependencies |
 |---|---|---|
-| `:app` | Composition root, route graph, bottom navigation, theme and runtime configuration | Features, data, domain |
+| `:app` | Thin Android host, manifest and packaging | Shared |
+| `iosApp` | Thin SwiftUI/Xcode host | Shared framework |
+| `:shared` | Composition root, route graph, bottom navigation, theme and build configuration | Features, data, domain |
 | `:feature:characters` | Character list/detail UI, state, pagination and accessibility semantics | Domain, model |
 | `:feature:locations` | Location list/detail UI, state, pagination and accessibility semantics | Domain, model |
 | `:feature:episodes` | Episode list/detail UI, state, pagination and accessibility semantics | Domain, model |
 | `:core:domain` | Repository contracts and use cases | Model only |
 | `:core:model` | Framework-free business entities | None |
-| `:core:data` | Retrofit service, DTOs, mappers, repositories and Hilt bindings | Domain, model |
+| `:core:data` | Ktor service, DTOs, mappers, repositories and platform HTTP engines | Domain, model |
+| `:core:designsystem` | Shared dimensions and design tokens | Compose UI |
 | `:core:testing` | Shared coroutine and ViewModel test utilities | Test libraries only |
 
 ### Backend coverage
@@ -124,17 +133,17 @@ Failures cross the data boundary as `CatalogResult<Page<T>, CatalogError>`. Conn
 
 | Area | Selection |
 |---|---|
-| Language and runtime | Kotlin 2.2.10, Java 17 |
-| UI and navigation | Jetpack Compose, Material 3, Navigation Compose 2.9.8, Compose BOM 2026.06.01 |
+| Language and runtime | Kotlin 2.3.21, Java 17, Swift 5 |
+| UI and navigation | Compose Multiplatform 1.10.3, Material 3, Navigation Compose 2.9.2 |
 | State and concurrency | ViewModel, StateFlow, Coroutines 1.11.0 |
-| Dependency injection | Hilt 2.60.1, KSP 2.3.10 |
-| Network | Retrofit 3.0.0, OkHttp 5.4.0, Gson |
+| Composition | Explicit `CatalogAppComponent` at the shared root |
+| Network | Ktor 3.4.3, kotlinx.serialization, OkHttp/Darwin engines |
 | Images | Coil 3.4.0 |
-| Testing | JUnit 4, Turbine, Coroutines Test, MockWebServer, Compose UI Test |
+| Testing | Kotlin Test, Turbine, Coroutines Test, Ktor MockEngine, Compose UI Test |
 | Quality | Android Lint, Detekt 1.23.8, KtLint Gradle 14.2.0, Kover 0.9.8 |
-| Build | AGP 9.0.0, Gradle 9.1.0, Android SDK 30–36 |
+| Build | AGP 9.0.0, Gradle 9.1.0, Android SDK 30–36, Xcode |
 
-The project uses AGP's built-in Kotlin support and the centralized Gradle version catalog at [`gradle/libs.versions.toml`](gradle/libs.versions.toml).
+The Android application remains a separate host, as required by the AGP Kotlin Multiplatform plugin. Shared libraries use `com.android.kotlin.multiplatform.library`, and versions are centralized in [`gradle/libs.versions.toml`](gradle/libs.versions.toml).
 
 ## Getting started
 
@@ -143,20 +152,24 @@ The project uses AGP's built-in Kotlin support and the centralized Gradle versio
 - Android Studio with support for Android Gradle Plugin 9.0.0.
 - JDK 17.
 - Android SDK 36.
+- macOS with Xcode for iOS builds.
 
 ### Build
 
 ```bash
 git clone https://github.com/Deiivid/Android-Clean-Architecture-Sample.git
 cd Android-Clean-Architecture-Sample
-./gradlew assembleDebug
+./gradlew :app:assembleDebug
 ```
 
-The public API requires no credentials. Open the project in Android Studio and run the `app` configuration on an Android 11 or newer device.
+The public API requires no credentials.
+
+- Android: open the project in Android Studio and run `app` on Android 11 or newer.
+- iOS: open `iosApp/iosApp.xcodeproj`, choose an iPhone simulator and run `iosApp`.
 
 ## Configuration and secrets
 
-The repository includes a complete, inspectable example of mobile configuration handling. Four optional credential values are consumed by an OkHttp interceptor, omitted when blank and redacted from HTTP logs:
+The repository includes a complete, inspectable example of mobile configuration handling. Four optional credential values are added by the shared Ktor client, omitted when blank and redacted from HTTP logs:
 
 | Name | GitHub configuration | Request usage |
 |---|---|---|
@@ -186,28 +199,36 @@ Three dedicated Gradle tasks demonstrate the full workflow without printing valu
 ./gradlew verifyEnvironmentVariables    # Strict optional credential check
 ```
 
-This prevents accidental source-control exposure; it does not make values embedded in an APK truly secret. Long-lived credentials belong on a trusted backend. The complete contract, CI mapping and threat boundary are documented in [`docs/SECRETS.md`](docs/SECRETS.md).
+This prevents accidental source-control exposure; it does not make values embedded in an APK or iOS app truly secret. Long-lived credentials belong on a trusted backend. The complete contract, CI mapping and threat boundary are documented in [`docs/SECRETS.md`](docs/SECRETS.md).
 
 ## Quality gates
 
 The local and CI verification command is:
 
 ```bash
-./gradlew test lintDebug detekt ktlintCheck :koverVerify assembleDebug --warning-mode all
+./gradlew testAndroidHostTest lintDebug detekt ktlintCheck :koverVerify \
+  :app:assembleDebug --warning-mode all
+./gradlew iosSimulatorArm64Test \
+  :shared:linkDebugFrameworkIosSimulatorArm64 \
+  :shared:linkDebugFrameworkIosArm64 --warning-mode all
+xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp \
+  -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+  CODE_SIGNING_ALLOWED=NO build
 ```
 
-The repository currently contains 52 JVM test cases and 11 instrumented Compose test cases. JVM coverage includes use-case delegation, complete DTO mapping, real Retrofit malformed/truncated responses, typed repository failures, cancellation propagation, credentials, save/restore round trips and every ViewModel transition for the three catalogs. Compose tests cover actionable grouped semantics, live-region loading announcements, bottom-navigation selection and its large-text/compact-width adaptations.
+Portable tests run on Android host and iOS simulator. Coverage includes use-case delegation, complete DTO mapping, Ktor malformed/truncated responses, typed repository failures, cancellation propagation, credentials, save/restore round trips and every ViewModel transition for the three catalogs. Android Compose tests cover actionable grouped semantics, live-region loading announcements, bottom-navigation selection and its large-text/compact-width adaptations.
 
 Instrumented tests require a connected device or emulator and remain separate from the headless CI gate:
 
 ```bash
 ./gradlew :app:connectedDebugAndroidTest \
-  :feature:characters:connectedDebugAndroidTest \
-  :feature:locations:connectedDebugAndroidTest \
-  :feature:episodes:connectedDebugAndroidTest
+  :shared:connectedAndroidDeviceTest \
+  :feature:characters:connectedAndroidDeviceTest \
+  :feature:locations:connectedAndroidDeviceTest \
+  :feature:episodes:connectedAndroidDeviceTest
 ```
 
-Kover enforces a 60% minimum over an explicit application-logic scope: domain, data mappers/repositories, the credentials interceptor, feature UI-state models and ViewModels. Generated code, resources, themes and Compose screen rendering are excluded; UI behavior is verified separately with instrumented Compose tests. GitHub Actions runs the full headless gate and `secretsStatus` on every push and pull request.
+Kover enforces a 60% minimum over an explicit application-logic scope: domain, data mappers/repositories/credential headers, feature UI-state models and ViewModels. Generated code, resources, themes and Compose screen rendering are excluded; UI behavior is verified separately. GitHub Actions runs the Android gate on Linux, the iOS gate on macOS and `secretsStatus` on every push and pull request.
 
 Engineering decisions are kept next to the implementation:
 
@@ -217,6 +238,6 @@ Engineering decisions are kept next to the implementation:
 
 ## Deliberate scope
 
-This reference focuses on modular architecture, remote catalogs, typed failures, pagination, route navigation, accessible Compose UI, configuration and testability. It does not claim offline persistence, search/filtering, user authentication, deep-link restoration of catalog details or production credential storage.
+This reference focuses on KMP modular architecture, shared mobile UI, remote catalogs, typed failures, pagination, route navigation, accessible Compose UI, configuration and testability. It does not claim offline persistence, search/filtering, user authentication, deep-link restoration of catalog details or production credential storage.
 
 Data is provided by the [Rick and Morty API](https://rickandmortyapi.com/). This educational project is not affiliated with the API or the television series.

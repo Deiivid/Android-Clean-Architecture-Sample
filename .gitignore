@@ -11,6 +11,9 @@
 /.idea/assetWizardSettings.xml
 /.idea/
 .DS_Store
+*.xcuserstate
+xcuserdata/
+DerivedData/
 build/
 /captures
 .externalNativeBuild

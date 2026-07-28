@@ -3,6 +3,9 @@ config:
 
 naming:
   FunctionNaming:
+    excludes:
+      - '**/src/commonTest/**'
+      - '**/src/androidDeviceTest/**'
     ignoreAnnotated:
       - Composable
 
@@ -13,6 +16,8 @@ style:
       - '**/*Screen.kt'
       - '**/src/test/**'
       - '**/src/androidTest/**'
+      - '**/src/commonTest/**'
+      - '**/src/androidDeviceTest/**'
   UnusedPrivateMember:
     ignoreAnnotated:
       - Preview

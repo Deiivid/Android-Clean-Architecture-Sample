@@ -1,11 +1,10 @@
 # App module instructions
 
-This module is the Android composition root.
+This module is the thin Android host.
 
-- Own application startup, root navigation, theme, manifest and Hilt wiring across modules.
-- Convert build-time configuration into typed objects such as `NetworkConfiguration` and `ApiCredentials`.
-- Depend on feature entry points and `core:data`; do not implement repositories, DTOs or business rules here.
-- Keep activities thin. Compose content should delegate feature behavior to feature routes/ViewModels.
+- Own Android application startup, manifest, system bars and packaging only.
+- Depend on `shared`; do not depend directly on features or core modules.
+- Keep activities thin and launch the shared `RickAndMortyApp`.
 - Do not read environment variables at runtime. Gradle resolves them at build time as documented in `docs/SECRETS.md`.
 - Never expose a credential value in logs, tests, screenshots or documentation.
 

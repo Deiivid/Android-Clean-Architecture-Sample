@@ -1,0 +1,5 @@
+<resources>
+    <string name="navigation_characters">Personajes</string>
+    <string name="navigation_locations">Lugares</string>
+    <string name="navigation_episodes">Episodios</string>
+</resources>

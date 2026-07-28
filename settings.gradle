@@ -14,6 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Android-Clean-Architecture-Sample"
 include ':app'
+include ':shared'
 include ':core:model'
 include ':core:designsystem'
 include ':core:testing'
